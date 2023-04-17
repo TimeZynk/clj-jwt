@@ -1,7 +1,12 @@
-(ns clj-jwt.sign
+(ns com.timezynk.clj-jwt.sign
   (:require
-    [clj-jwt.base64  :refer [url-safe-encode-str url-safe-decode]]
-    [crypto.equality :refer [eq?]]))
+   [com.timezynk.clj-jwt.base64 :refer [url-safe-encode-str url-safe-decode]]
+   [crypto.equality :refer [eq?]]))
+
+; Initialize SecureRandom only once, since it requests a fresh
+; seed on every initialization and this can take a very long
+; time depending on which platform you use.
+(def random-source (delay (java.security.SecureRandom.)))
 
 ; HMAC
 (defn- hmac-sign
@@ -9,7 +14,7 @@
   [alg key body & {:keys [charset] :or {charset "UTF-8"}}]
   (let [hmac-key (javax.crypto.spec.SecretKeySpec. (.getBytes key charset) alg)
         hmac     (doto (javax.crypto.Mac/getInstance alg)
-                       (.init hmac-key))]
+                   (.init hmac-key))]
     (url-safe-encode-str (.doFinal hmac (.getBytes body charset)))))
 
 (defn- hmac-verify
@@ -22,32 +27,31 @@
   "Function to sign data with RSA algorithm."
   [alg key body & {:keys [charset] :or {charset "UTF-8"}}]
   (let [sig (doto (java.security.Signature/getInstance alg)
-                  (.initSign key (java.security.SecureRandom.))
-                  (.update (.getBytes body charset)))]
+              (.initSign key @random-source)
+              (.update (.getBytes body charset)))]
     (url-safe-encode-str (.sign sig))))
 
 (defn- rsa-verify
   "Function to verify data and signature with RSA algorithm."
   [alg key body signature & {:keys [charset] :or {charset "UTF-8"}}]
   (let [sig (doto (java.security.Signature/getInstance alg)
-                  (.initVerify key)
-                  (.update (.getBytes body charset)))]
+              (.initVerify key)
+              (.update (.getBytes body charset)))]
     (.verify sig (url-safe-decode signature))))
-
 
 ; ECDSA
 (defn- ec-sign
   [alg key body & {:keys [charset] :or {charset "UTF-8"}}]
   (let [sig (doto (java.security.Signature/getInstance alg)
-                  (.initSign key)
-                  (.update (.getBytes body charset)))]
+              (.initSign key)
+              (.update (.getBytes body charset)))]
     (url-safe-encode-str (.sign sig))))
 
 (defn ec-verify
   [alg key body signature & {:keys [charset] :or {charset "UTF-8"}}]
   (let [sig (doto (java.security.Signature/getInstance alg)
-                  (.initSign key)
-                  (.update (.getBytes body charset)))]
+              (.initSign key)
+              (.update (.getBytes body charset)))]
     (.verify sig (url-safe-decode signature))))
 
 (def ^:private signature-fns

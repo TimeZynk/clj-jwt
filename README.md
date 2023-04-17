@@ -1,9 +1,6 @@
-# clj-jwt
+# TimeZynk/clj-jwt [![Clojars Project](https://img.shields.io/clojars/v/com.timezynk/clj-jwt.svg)](https://clojars.org/com.timezynk/clj-jwt) 
 
-[![Build Status](https://travis-ci.org/liquidz/clj-jwt.png?branch=master)](https://travis-ci.org/liquidz/clj-jwt)
-[![Dependency Status](https://www.versioneye.com/user/projects/53462a37e97a46e756000308/badge.png)](https://www.versioneye.com/user/projects/53462a37e97a46e756000308)
-
-A Clojure library for JSON Web Token(JWT) [draft-ietf-oauth-json-web-token-19](http://tools.ietf.org/html/draft-ietf-oauth-json-web-token-19)
+A Clojure library for JSON Web Token(JWT), forked from [https://github.com/liquidz/clj-jwt](https://github.com/liquidz/clj-jwt)
 
 ## Supporting algorithms
  * HS256, HS384, HS512
@@ -16,21 +13,21 @@ A Clojure library for JSON Web Token(JWT) [draft-ietf-oauth-json-web-token-19](h
 ## Usage
 
 ### Leiningen
-[![clj-jwt](https://clojars.org/clj-jwt/latest-version.svg)](https://clojars.org/clj-jwt)
+[![com.timezynk.clj-jwt](https://clojars.org/com.timezynk.clj-jwt/latest-version.svg)](https://clojars.org/com.timezynk.clj-jwt)
 
 ### Generate
 
 ```clojure
 (ns foo
   (:require
-    [clj-jwt.core  :refer :all]
-    [clj-jwt.key   :refer [private-key]]
-    [clj-time.core :refer [now plus days]]))
+   [com.timezynk.clj-jwt.core :refer [jwt sign to-str]]
+   [com.timezynk.clj-jwt.key  :refer [private-key]]
+   [java-time.api :refer [days plus zoned-date-time]]))
 
 (def claim
   {:iss "foo"
-   :exp (plus (now) (days 1))
-   :iat (now)})
+   :exp (plus (zoned-date-time) (days 1))
+   :iat (zoned-date-time)})
 
 (def rsa-prv-key (private-key "rsa/private.key" "pass phrase"))
 (def ec-prv-key  (private-key "ec/private.key"))
@@ -53,14 +50,14 @@ A Clojure library for JSON Web Token(JWT) [draft-ietf-oauth-json-web-token-19](h
 ```clojure
 (ns foo
   (:require
-    [clj-jwt.core  :refer :all]
-    [clj-jwt.key   :refer [private-key public-key]]
-    [clj-time.core :refer [now plus days]]))
+   [com.timezynk.clj-jwt.core :refer [jwt sign str->jwt to-str verify]]
+   [com.timezynk.clj-jwt.key  :refer [private-key public-key]]
+   [java-time.api :refer [days plus zoned-date-time]]))
 
 (def claim
   {:iss "foo"
-   :exp (plus (now) (days 1))
-   :iat (now)})
+   :exp (plus (zoned-date-time) (days 1))
+   :iat (zoned-date-time)})
 
 (def rsa-prv-key (private-key "rsa/private.key" "pass phrase"))
 (def rsa-pub-key (public-key  "rsa/public.key"))
@@ -89,7 +86,7 @@ You can specify algorithm name (OPTIONAL) for more secure verification.
 ```clj
 (ns foo
   (:require
-    [clj-jwt.core  :refer :all]))
+   [com.timezynk.clj-jwt.core :refer [jwt sign str->jwt to-str verify]]))
 
 ;; verify with specified algorithm
 (let [key   "secret"
@@ -103,12 +100,13 @@ You can specify algorithm name (OPTIONAL) for more secure verification.
 ```clj
 (ns foo
   (:require
-    [clj-jwt.core  :refer :all]))
+   [com.timezynk.clj-jwt.core :refer [jwt sign str->jwt to-str verify]]
+   [java-time.api :refer [days plus zoned-date-time]]))
 
 (def claim
   {:iss "foo"
-   :exp (plus (now) (days 1))
-   :iat (now)})
+   :exp (plus (zoned-date-time) (days 1))
+   :iat (zoned-date-time)})
 
 ;; decode plain JWT
 (let [token (-> claim jwt to-str)]
@@ -118,9 +116,3 @@ You can specify algorithm name (OPTIONAL) for more secure verification.
 (let [token (-> claim jwt (sign :HS256 "secret") to-str)]
   (println (-> token str->jwt :claims)))
 ```
-
-## License
-
-Copyright © 2015 [uochan](http://twitter.com/uochan)
-
-Distributed under the Eclipse Public License, the same as Clojure.

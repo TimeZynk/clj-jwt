@@ -1,4 +1,4 @@
-(ns clj-jwt.base64
+(ns com.timezynk.clj-jwt.base64
   (:require [clojure.data.codec.base64 :as base64]
             [clojure.string            :as str])
   (:import [java.io ByteArrayInputStream ByteArrayOutputStream]))

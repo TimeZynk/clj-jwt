@@ -1,6 +1,6 @@
-(ns clj-jwt.intdate
+(ns com.timezynk.clj-jwt.intdate
   (:require
-    [clj-time.coerce :refer [to-long from-long]]))
+   [clj-time.coerce :refer [to-long from-long]]))
 
 (defn- joda-time? [x] (= org.joda.time.DateTime (type x)))
 
@@ -8,7 +8,6 @@
   [d]
   {:pre [(joda-time? d)]}
   (int (/ (to-long d) 1000)))
-
 
 (defn intdate->joda-time
   [i]
