@@ -1,17 +1,16 @@
 (ns com.timezynk.clj-jwt.intdate-test
   (:require
-   [clj-time.core   :refer [date-time]]
    [clojure.test :refer [deftest is testing]]
-   [com.timezynk.clj-jwt.intdate :refer [intdate->joda-time joda-time->intdate]]))
+   [com.timezynk.clj-jwt.intdate :refer [java-time->seconds seconds->java-time]])
+  (:import [java.time ZonedDateTime]))
 
 (deftest convert-time
-  (testing "joda-time->intdate should work fine."
-    (let [d (date-time 2000 1 2 3 4 5)]
-      (is (= 946782245 (joda-time->intdate d)))
-      (is (thrown? AssertionError (joda-time->intdate nil)))))
-
-  (testing "intdate->joda-time should work fine."
-    (let [d (date-time 2000 1 2 3 4 5)
-          i (joda-time->intdate d)]
-      (is (= d (intdate->joda-time i)))
-      (is (thrown? AssertionError (intdate->joda-time nil))))))
+  (testing "java-time->seconds should work fine."
+    (let [d (ZonedDateTime/parse "2000-01-02T03:04:05Z")]
+      (is (= 946782245 (java-time->seconds d)))
+      (is (thrown? AssertionError (java-time->seconds nil)))))
+  (testing "seconds->java-time should work fine."
+    (let [d (ZonedDateTime/parse "2000-01-02T03:04:05Z")
+          i (java-time->seconds d)]
+      (is (= d (seconds->java-time i)))
+      (is (thrown? AssertionError (seconds->java-time nil))))))

@@ -4,7 +4,7 @@
    [clojure.string      :as str]
    [com.timezynk.clj-jwt.base64      :refer [url-safe-encode-str url-safe-decode-str]]
    [com.timezynk.clj-jwt.sign        :refer [get-signature-fn get-verify-fn supported-algorithm?]]
-   [com.timezynk.clj-jwt.intdate     :refer [joda-time->intdate]]
+   [com.timezynk.clj-jwt.intdate     :refer [java-time->seconds]]
    [com.timezynk.clj-jwt.json-key-fn :refer [write-key read-key]]))
 
 (def ^:private DEFAULT_SIGNATURE_ALGORITHM :HS256)
@@ -29,7 +29,7 @@
 (extend-protocol JsonWebToken
   JWT
   (init [this claims]
-    (let [claims (reduce #(update-map % %2 joda-time->intdate) claims [:exp :nbf :iat])]
+    (let [claims (reduce #(update-map % %2 java-time->seconds) claims [:exp :nbf :iat])]
       (assoc this :header {:alg "none" :typ "JWT"} :claims claims :signature "")))
 
   (encoded-header [this]

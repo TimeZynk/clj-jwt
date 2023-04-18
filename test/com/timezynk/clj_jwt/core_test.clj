@@ -1,6 +1,5 @@
 (ns com.timezynk.clj-jwt.core-test
   (:require
-   [clj-time.core :refer [date-time plus days]]
    [clojure.test :refer [deftest is testing use-fixtures]]
    [com.timezynk.clj-jwt.core :as jwt]
    [com.timezynk.clj-jwt.key :refer [private-key public-key]])
@@ -76,8 +75,8 @@
                   "7NqAbxXYMDXti2PhV9PgRzOp97zPCSD98bML0Cy89E8sPcnM7-07wWOK4yhuoTWyV_8")
              (-> claim jwt/jwt (jwt/sign :RS512 rsa-enc-prv-key) jwt/to-str))))
     (testing "'exp', 'nbf', 'iat' claims should be converted as IntDate."
-      (let [d     (date-time 2000 1 2 3 4 5)
-            claim (merge claim {:exp (plus d (days 1)) :nbf d :iat d :dmy d})
+      (let [d     (java.time.ZonedDateTime/parse "2000-01-02T03:04:05Z")
+            claim (merge claim {:exp (.plusDays d 1) :nbf d :iat d :dmy d})
             token (jwt/jwt claim)]
         (is (= 946868645 (-> token :claims :exp)))
         (is (= 946782245 (-> token :claims :nbf)))

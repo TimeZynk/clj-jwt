@@ -1,15 +1,18 @@
 (ns com.timezynk.clj-jwt.intdate
-  (:require
-   [clj-time.coerce :refer [to-long from-long]]))
+  (:import [java.time Instant ZonedDateTime ZoneId]))
 
-(defn- joda-time? [x] (= org.joda.time.DateTime (type x)))
+(defn- java-time? [x] (= ZonedDateTime (type x)))
 
-(defn joda-time->intdate
-  [d]
-  {:pre [(joda-time? d)]}
-  (int (/ (to-long d) 1000)))
+(defn java-time->seconds ^Long
+  [^ZonedDateTime d]
+  {:pre (java-time? d)}
+  (-> (Instant/from d)
+      (.getEpochSecond)))
 
-(defn intdate->joda-time
-  [i]
-  {:pre [(integer? i) (pos? i)]}
-  (from-long (* i 1000)))
+(defn seconds->java-time ^ZonedDateTime
+  ([^Long i]
+   (seconds->java-time i (ZoneId/of "Z")))
+  ([^Long i ^ZoneId z]
+   {:pre [(integer? i) (pos? i)]}
+   (-> (Instant/ofEpochSecond i)
+       (.atZone z))))

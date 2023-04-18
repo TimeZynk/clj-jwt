@@ -16,7 +16,6 @@
     (testing "attack"
       (is (jwt/verify original key))
       (is (not (jwt/verify attacked key))))
-
     (testing "defense"
       (is (jwt/verify original :HS256 key))
       (is (not (jwt/verify original :RS256 key)))
@@ -32,7 +31,6 @@
     (testing "attack"
       (is (jwt/verify original rsa-pub-key))
       (is (thrown? Exception (jwt/verify attacked rsa-pub-key))))
-
     (testing "defense"
       (is (jwt/verify original :RS256 rsa-pub-key))
       (is (not (jwt/verify original :HS256 rsa-pub-key)))
