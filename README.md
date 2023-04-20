@@ -13,7 +13,7 @@ A Clojure library for JSON Web Token(JWT), forked from [https://github.com/liqui
 ## Usage
 
 ### Leiningen
-[![com.timezynk.clj-jwt](https://clojars.org/com.timezynk.clj-jwt/latest-version.svg)](https://clojars.org/com.timezynk.clj-jwt)
+[![com.timezynk.clj-jwt](https://clojars.org/com.timezynk/clj-jwt/latest-version.svg)](https://clojars.org/com.timezynk/clj-jwt)
 
 ### Generate
 
