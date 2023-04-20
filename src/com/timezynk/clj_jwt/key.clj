@@ -1,13 +1,13 @@
-(ns clj-jwt.key
+(ns com.timezynk.clj-jwt.key
   (:require
-    [clojure.java.io :as io])
+   [clojure.java.io :as io])
   (:import
-    [org.bouncycastle.openssl PEMParser PEMKeyPair PEMEncryptedKeyPair]
-    [org.bouncycastle.openssl.jcajce JcaPEMKeyConverter JcePEMDecryptorProviderBuilder]
-    [org.bouncycastle.asn1.pkcs PrivateKeyInfo]
-    [org.bouncycastle.asn1.x509 SubjectPublicKeyInfo]
-    [org.bouncycastle.cert X509CertificateHolder]
-    [java.io StringReader]))
+   [org.bouncycastle.openssl PEMParser PEMKeyPair PEMEncryptedKeyPair]
+   [org.bouncycastle.openssl.jcajce JcaPEMKeyConverter JcePEMDecryptorProviderBuilder]
+   [org.bouncycastle.asn1.pkcs PrivateKeyInfo]
+   [org.bouncycastle.asn1.x509 SubjectPublicKeyInfo]
+   [org.bouncycastle.cert X509CertificateHolder]
+   [java.io StringReader]))
 
 (defprotocol GetPrivateKey
   (-get-private-key [key-info password]))
@@ -15,7 +15,7 @@
 (defprotocol GetPublicKey
   (-get-public-key [key-info password]))
 
-(defn ^JcaPEMKeyConverter pem-converter
+(defn pem-converter ^JcaPEMKeyConverter
   []
   (JcaPEMKeyConverter.))
 
@@ -58,7 +58,7 @@
     (let [dec-prov (-> (JcePEMDecryptorProviderBuilder.)
                        (.build (.toCharArray password)))]
       (-get-private-key (-> key-info
-                           (.decryptKeyPair dec-prov)) nil)))
+                            (.decryptKeyPair dec-prov)) nil)))
   GetPublicKey
   (-get-public-key
     [key-info ^String password]

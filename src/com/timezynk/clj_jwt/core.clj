@@ -1,11 +1,11 @@
-(ns clj-jwt.core
+(ns com.timezynk.clj-jwt.core
   (:require
-    [clj-jwt.base64      :refer [url-safe-encode-str url-safe-decode-str]]
-    [clj-jwt.sign        :refer [get-signature-fn get-verify-fn supported-algorithm?]]
-    [clj-jwt.intdate     :refer [joda-time->intdate]]
-    [clj-jwt.json-key-fn :refer [write-key read-key]]
-    [clojure.data.json   :as json]
-    [clojure.string      :as str]))
+   [clojure.data.json   :as json]
+   [clojure.string      :as str]
+   [com.timezynk.clj-jwt.base64      :refer [url-safe-encode-str url-safe-decode-str]]
+   [com.timezynk.clj-jwt.sign        :refer [get-signature-fn get-verify-fn supported-algorithm?]]
+   [com.timezynk.clj-jwt.intdate     :refer [java-time->seconds]]
+   [com.timezynk.clj-jwt.json-key-fn :refer [write-key read-key]]))
 
 (def ^:private DEFAULT_SIGNATURE_ALGORITHM :HS256)
 (def ^:private map->encoded-json (comp url-safe-encode-str
@@ -29,7 +29,7 @@
 (extend-protocol JsonWebToken
   JWT
   (init [this claims]
-    (let [claims (reduce #(update-map % %2 joda-time->intdate) claims [:exp :nbf :iat])]
+    (let [claims (reduce #(update-map % %2 java-time->seconds) claims [:exp :nbf :iat])]
       (assoc this :header {:alg "none" :typ "JWT"} :claims claims :signature "")))
 
   (encoded-header [this]
@@ -40,7 +40,6 @@
 
   (to-str [this]
     (str (encoded-header this) "." (encoded-claims this) "." (get this :signature ""))))
-
 
 ; ----------------------------------
 ; JsonWebSignature

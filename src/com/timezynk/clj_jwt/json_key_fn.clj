@@ -1,6 +1,4 @@
-(ns clj-jwt.json-key-fn
-  (:require
-    [clojure.string :as str]))
+(ns com.timezynk.clj-jwt.json-key-fn)
 
 (defn write-key
   [x]
@@ -13,5 +11,3 @@
   (if-let [y (re-seq #"^\"(.*)\"$" x)]
     (-> y first second)
     (keyword x)))
-
-
